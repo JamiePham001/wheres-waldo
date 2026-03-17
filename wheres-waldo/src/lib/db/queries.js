@@ -29,3 +29,15 @@ export const getMapById = async (id) => {
     where: { id },
   });
 };
+
+export const createUser = async (name) => {
+  return await prisma.user.create({
+    data: { name },
+  });
+};
+
+export const getUserByName = async (name) => {
+  return await prisma.user.findUnique({
+    where: { name },
+  });
+};
