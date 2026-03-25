@@ -205,6 +205,15 @@ To run the full project locally, you will need environment variables for:
 - Cloudinary credentials
 - the optional map creation access toggle
 
+## Future Improvements
+
+At the moment, the project only contains some of the bare minimum features to enjoy the game and create levels. Some features to make the game more complete would be:
+
+- add admin features to delete and update levels
+- add a cron-based job scheduler for the database to process unused and expired game sessions, and remove any expired usernames
+- add a global leaderboard that tracks time taken to beat all levels
+- make the level images dynamically expand in size on the page depending on how large the image is or how detailed it is.
+
 ## Project Summary
 
 This Where's Waldo clone is a full-stack game project that combines interactive image-based gameplay with persistent score tracking, authentication, file uploads, and leaderboard ranking. It demonstrates practical use of Next.js, React, Prisma, PostgreSQL, Cloudinary, JWT-based auth, and protected internal tooling for content management.
