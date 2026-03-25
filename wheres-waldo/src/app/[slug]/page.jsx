@@ -60,7 +60,6 @@ export default function MapLevel() {
         }
         const payload = await response.json();
         scoreIdRef.current = payload.data.id;
-        console.log("Score created:", payload);
       } catch (error) {
         console.error("Error creating score:", error);
       }
@@ -135,10 +134,8 @@ export default function MapLevel() {
         if (lastClickRef.current) {
           makeConfetti(lastClickRef.current);
           const split = handleSplit(isRunning, time);
-          console.log(split);
         }
 
-        console.log(`${characterName} found!`);
         return {
           ...character,
           found: true,
@@ -214,7 +211,6 @@ export default function MapLevel() {
         mapId: paramsId.slug,
       });
       setIsOpen(true);
-      console.log("Score finished:", finalTime);
     };
 
     if (
@@ -222,7 +218,6 @@ export default function MapLevel() {
       characters.every((char) => char.found) &&
       scoreIdRef.current
     ) {
-      console.log("All characters found! You win!");
       completeLevel();
     }
   }, [characters]);

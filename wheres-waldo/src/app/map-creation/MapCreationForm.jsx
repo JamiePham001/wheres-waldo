@@ -62,7 +62,6 @@ export default function MapCreationForm() {
           body: formData,
         });
         const result = await response.json();
-        console.log(result);
       } catch (error) {
         console.error("Error submitting data:", error);
       }

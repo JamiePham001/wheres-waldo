@@ -120,6 +120,27 @@ The user creation route:
 - creates the user record
 - signs and returns a JWT for the client
 
+## Anti-Cheat Measures
+
+The game uses a server-authoritative timing model to prevent players from submitting manipulated scores.
+
+### Server-Side Timestamps
+
+When a level begins, the backend creates a score record in the database with a `startedAt` timestamp set by the server, not the client. When the player completes the level, the client sends a request to the end-game API, which sets the `finishAt` timestamp — also server-side. The actual run duration is always computed as `finishAt - startedAt` from these two database values, which means the client timer displayed to the player is only cosmetic and has no influence over the recorded time.
+
+This means:
+- A player cannot fabricate a short completion time by sending a custom time value to the server
+- Pausing or manipulating the visible client timer does not affect the actual score
+- Any score submitted to the leaderboard reflects a duration that was entirely measured by the server
+
+### Character Coordinates Never Exposed
+
+The correct target coordinates for each character are stored in the database and are only accessed server-side during click validation. The client never receives the raw answer data, so players cannot read the coordinates from network responses to trivially locate characters.
+
+### Scores Require an Explicit Submission Step
+
+A completed score is not automatically counted on the leaderboard. The `submitted` field on the score record defaults to `false`. Only after the player explicitly confirms and submits does the score become eligible for leaderboard ranking. This prevents abandoned or incomplete runs from polluting the rankings.
+
 ## Leaderboard and Ranking Logic
 
 Each map has its own leaderboard. Scores are ordered by the difference between finish time and start time, so lower completion times rank higher. Ranking is calculated in SQL using a window function, which keeps the logic efficient and map-specific.

@@ -12,7 +12,5 @@ export default function AuthGate() {
 
   const shouldShow = !user && !dismissed;
 
-  console.log("User:", user);
-
   return <LoginModal isOpen={shouldShow} onClose={() => setDismissed(true)} />;
 }
