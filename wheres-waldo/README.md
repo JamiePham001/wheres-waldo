@@ -6,6 +6,12 @@ This project is a full-stack Where's Waldo style browser game built with Next.js
 
 The application combines a React-based client experience with Next.js API routes, Prisma, PostgreSQL, Cloudinary, and JWT-based session handling. It also includes internal tooling for uploading new maps and defining hidden-character coordinates.
 
+<img width="2533" height="1270" alt="image" src="https://github.com/user-attachments/assets/b9df0f95-3329-44c2-b701-5b382d93fe94" />
+<img width="2538" height="1279" alt="image" src="https://github.com/user-attachments/assets/bfae7a37-7cd6-4374-a041-5caec49e9ae6" />
+<img width="2535" height="1274" alt="image" src="https://github.com/user-attachments/assets/571a10dd-a780-4c61-80ab-7044669c2a21" />
+
+
+
 ## Features
 
 - Browse available maps from the home page
