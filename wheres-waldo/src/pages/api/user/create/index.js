@@ -48,24 +48,13 @@ export default async function handler(req, res) {
 
   try {
     const user = await createUser(name);
-    const token = jwt.sign(
-      { id: user.id, name: user.name },
-      JWT_SECRET,
-      {
-        expiresIn: "2weeks",
-      },
-      (err, token) => {
-        if (err) {
-          console.error("Error signing JWTL:", err);
-          return res
-            .status(500)
-            .json({ success: false, error: "Internal Server Error" });
-        }
-        res.status(201).json({ success: true, data: { user, token } });
-      },
-    );
+    const token = jwt.sign({ id: user.id, name: user.name }, JWT_SECRET, {
+      expiresIn: "2weeks",
+    });
+
     return res.status(201).json({ success: true, data: { user, token } });
   } catch (error) {
+    console.error("Error creating user:", error);
     return res
       .status(500)
       .json({ success: false, error: "Internal Server Error" });

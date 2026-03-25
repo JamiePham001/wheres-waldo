@@ -1,6 +1,22 @@
 import styles from "./style.module.css";
+import { useState, useEffect } from "react";
 
 export default function Leaderboard({ mapData }) {
+  const [scores, setScores] = useState([]);
+
+  useEffect(() => {
+    const fetchScores = async () => {
+      try {
+        const response = await fetch(`/api/game/scoreboard/${mapData.id}`);
+        const data = await response.json();
+        if (data.success) {
+          setScores(data.scores);
+        }
+      } catch (error) {}
+    };
+    fetchScores();
+  }, [mapData.id]);
+
   return (
     <div
       className={styles.leaderboard}
@@ -24,12 +40,22 @@ export default function Leaderboard({ mapData }) {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td className={styles.td}>1</td>
-            <td className={styles.td}>lol</td>
-            <td className={styles.td}>3.0s</td>
-            <td className={styles.td}>26/07/2026</td>
-          </tr>
+          {scores.map((score, index) => (
+            <tr key={score.id}>
+              <td className={styles.td}>{index + 1}</td>
+              <td className={styles.td}>{score.name}</td>
+              <td className={styles.td}>
+                {(
+                  (new Date(score.finishAt) - new Date(score.startedAt)) /
+                  1000
+                ).toFixed(1)}
+                s
+              </td>
+              <td className={styles.td}>
+                {new Date(score.startedAt).toLocaleDateString()}
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>

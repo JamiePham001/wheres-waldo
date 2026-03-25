@@ -1,18 +1,26 @@
 "use client";
 import { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import styles from "./loginmodal.module.css";
+import styles from "./submitModal.module.css";
 import { useAuth } from "@/components/features/auth/AuthProvider";
+import { useRouter } from "next/navigation";
 
-export default function LoginModal({ isOpen, onClose, children }) {
+export default function SubmitScoreModal({
+  isOpen,
+  onClose,
+  children,
+  scoreData,
+}) {
   const { user, login } = useAuth();
-  const [username, setUsername] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const { time, rank, scoreId, mapId } = scoreData || {};
 
   // Prevent background scroll when modal is open
   useEffect(() => {
-    if (isOpen && !user) {
+    if (isOpen && user) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
@@ -20,7 +28,38 @@ export default function LoginModal({ isOpen, onClose, children }) {
     return () => {
       document.body.style.overflow = "";
     };
-  }, [isOpen, user]);
+  }, [isOpen, scoreId, user]);
+
+  const findNextLevel = async () => {
+    try {
+      const response = await fetch("/api/image/fetchOrdered");
+      if (!response.ok) {
+        throw new Error("Failed to fetch levels");
+      }
+      const data = await response.json();
+      const levelsArray = data.data;
+
+      const currentLevelIndex = levelsArray.findIndex(
+        (level) => level.id === Number(mapId),
+      );
+
+      if (currentLevelIndex === -1) {
+        router.push("/");
+        return;
+      }
+
+      const nextLevel = levelsArray[currentLevelIndex + 1]?.id;
+
+      if (!nextLevel) {
+        router.push("/");
+        return;
+      }
+
+      router.push(`/${nextLevel}`);
+    } catch (error) {
+      console.error("Error fetching levels:", error);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,20 +67,19 @@ export default function LoginModal({ isOpen, onClose, children }) {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/user/create", {
+      const response = await fetch("/api/game/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: username }),
+        body: JSON.stringify({ scoreId: scoreId }),
       });
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.message || "Failed to create user");
+        throw new Error(data.message || "Failed to submit score");
       }
 
-      const data = await response.json();
-      login(data.data.token, data.data.user);
-      setUsername("");
+      await findNextLevel();
+
       onClose();
     } catch (err) {
       setError(err.message);
@@ -57,16 +95,9 @@ export default function LoginModal({ isOpen, onClose, children }) {
       <div className={styles.modal}>
         {children || (
           <form onSubmit={handleSubmit} className={styles.form}>
-            <h2 style={{ color: "white" }}>Enter a username to continue</h2>
-            <input
-              type="text"
-              value={username}
-              placeholder="username"
-              onChange={(e) => setUsername(e.target.value)}
-              disabled={loading}
-              required
-              className={styles.input}
-            />
+            <h2 style={{ color: "white" }}>
+              Level completed in {time}s and you scored a rank of {rank}
+            </h2>
             {error && <p style={{ color: "red" }}>{error}</p>}
             <div className={styles.submitRow}>
               <button
@@ -74,7 +105,7 @@ export default function LoginModal({ isOpen, onClose, children }) {
                 disabled={loading}
                 className={styles.submitBtn}
               >
-                {loading ? "Creating..." : "Play"}
+                {loading ? "Creating..." : "Submit and Play Next Level"}
               </button>
             </div>
           </form>

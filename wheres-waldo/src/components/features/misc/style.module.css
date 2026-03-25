@@ -1,3 +1,37 @@
 .found {
   filter: grayscale(100%) brightness(50%);
 }
+
+.iconStack {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tick {
+  position: absolute;
+  top: 0;
+  right: -2px;
+  z-index: 3;
+  opacity: 0;
+  transform: scale(0.9);
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease;
+  pointer-events: none;
+}
+
+.tickVisible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.time {
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+
+.timeVisible {
+  opacity: 1;
+}

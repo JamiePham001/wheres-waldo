@@ -39,7 +39,8 @@ model Score {
   imageId Int
   userId Int
   startedAt DateTime @default(now())
-  finished Boolean @default(false)
+  finishAt DateTime?
+  submitted Boolean @default(false)
 
   user User @relation(fields: [userId], references: [id])
   image Image @relation(fields: [imageId], references: [id])

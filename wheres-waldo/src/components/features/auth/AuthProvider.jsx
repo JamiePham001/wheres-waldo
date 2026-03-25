@@ -5,6 +5,15 @@ import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext();
 
+function isLikelyJwt(token) {
+  if (typeof token !== "string") {
+    return false;
+  }
+
+  const parts = token.split(".");
+  return parts.length === 3 && parts.every((part) => part.length > 0);
+}
+
 export function useAuth() {
   const context = use(AuthContext);
   if (!context) {
@@ -27,6 +36,15 @@ export default function AuthProvider({ children }) {
     const token = localStorage.getItem("authToken");
 
     if (token) {
+      if (!isLikelyJwt(token)) {
+        localStorage.removeItem("authToken");
+        queueMicrotask(() => {
+          setUser(null);
+          setLoading(false);
+        });
+        return;
+      }
+
       try {
         const decoded = jwtDecode(token);
         if (decoded.exp * 1000 < Date.now()) {
@@ -58,6 +76,12 @@ export default function AuthProvider({ children }) {
   }, []);
 
   const login = (token, userData) => {
+    if (!isLikelyJwt(token)) {
+      localStorage.removeItem("authToken");
+      setUser(null);
+      return;
+    }
+
     localStorage.setItem("authToken", token);
     setUser(userData);
   };
