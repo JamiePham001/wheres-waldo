@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import CharIconContainer from "../misc/CharIconContainer";
 import style from "./style.module.css";
 import Link from "next/link";
@@ -15,13 +14,15 @@ export default function ImageCard({ cardData }) {
 
   return (
     <Link className={style.imageCard} href={`/${cardData.id}`}>
-      <Image
-        src={parsedData.url}
-        alt={cardData.name + " image"}
-        className={style.image}
-        width={310}
-        height={310}
-      />
+      <div className={style.imageWrapper}>
+        <Image
+          src={parsedData.url}
+          alt={cardData.name + " image"}
+          className={style.image}
+          fill
+          sizes="(max-width: 768px) 100vw, 330px"
+        />
+      </div>
       <section
         className={style.section}
         style={{
