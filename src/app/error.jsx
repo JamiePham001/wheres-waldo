@@ -1,14 +1,11 @@
 "use client";
 
-export default function Error() {
+export default function Error({ error, reset }) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md text-center">
-        <h1 className="text-3xl font-bold text-red-600 mb-4">
-          Something went wrong!
-        </h1>
-        <p className="text-gray-700 mb-6">{error.message}</p>
-      </div>
+    <div>
+      <h2>Something went wrong!</h2>
+      <pre>{error.message}</pre>
+      <button onClick={() => reset()}>Try again</button>
     </div>
   );
 }

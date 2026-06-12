@@ -1,13 +1,12 @@
 "use client";
 
-export default function GlobalError() {
+export default function GlobalError({ error, reset }) {
   return (
     <html>
       <body>
-        <div style={{ padding: "2rem", textAlign: "center" }}>
-          <h1>Something went wrong!</h1>
-          <p>An unexpected error occurred. Please try again later.</p>
-        </div>
+        <h2>Something went very wrong.</h2>
+        <pre>{error.message}</pre>
+        <button onClick={() => reset()}>Try again</button>
       </body>
     </html>
   );
