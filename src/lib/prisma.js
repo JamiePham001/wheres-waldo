@@ -3,12 +3,20 @@ const { PrismaClient } = require("@prisma/client");
 const { PrismaPg } = require("@prisma/adapter-pg");
 const { Pool } = require("pg");
 
-const connectionString = process.env.DATABASE_URL;
+const globalForPrisma = globalThis;
 
-const pool = new Pool({ connectionString });
+function createPrismaClient() {
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) {
+    throw new Error("DATABASE_URL environment variable is not set");
+  }
+  const pool = new Pool({ connectionString });
+  const adapter = new PrismaPg(pool);
+  return new PrismaClient({ adapter });
+}
 
-const adapter = new PrismaPg(pool);
+const prisma = globalForPrisma.prisma ?? createPrismaClient();
 
-const prisma = new PrismaClient({ adapter });
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
-module.exports = { prisma };
+export { prisma };
