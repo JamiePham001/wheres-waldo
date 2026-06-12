@@ -3,6 +3,7 @@ import "./globals.css";
 import Header from "../components/layout/header/Header";
 import ClientProviders from "@/components/providers/ClientProviders";
 import ClientShell from "@/components/providers/ClientShell";
+import ClientProvider from "@/components/providers/ClientProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,10 +24,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <ClientProviders>
-          <Header />
-          <ClientShell>{children}</ClientShell>
-        </ClientProviders>
+        <ClientProvider>
+          <ClientProviders>
+            <Header />
+            <ClientShell>{children}</ClientShell>
+          </ClientProviders>
+        </ClientProvider>
       </body>
     </html>
   );
