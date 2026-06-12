@@ -2,7 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "../components/layout/header/Header";
 import ClientProviders from "@/components/providers/ClientProviders";
-import AuthGate from "@/components/layout/authModal/AuthGate";
+import ClientShell from "@/components/providers/ClientShell";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,8 +25,7 @@ export default function RootLayout({ children }) {
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <ClientProviders>
           <Header />
-          <AuthGate />
-          {children}
+          <ClientShell>{children}</ClientShell>
         </ClientProviders>
       </body>
     </html>
