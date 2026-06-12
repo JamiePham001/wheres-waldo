@@ -41,10 +41,11 @@ export default function LoginModal({ isOpen, onClose, children }) {
       });
 
       if (!response.ok) {
-        throw new Error(data.message || "Failed to create user");
+        throw new Error("Failed to create user");
       }
 
       const data = await response.json();
+
       login(data.data.token, data.data.user);
       setUsername("");
       onClose();
