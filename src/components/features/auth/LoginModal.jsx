@@ -10,6 +10,12 @@ export default function LoginModal({ isOpen, onClose, children }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Prevent background scroll when modal is open
   useEffect(() => {
     if (isOpen && !user) {
@@ -51,6 +57,7 @@ export default function LoginModal({ isOpen, onClose, children }) {
   };
 
   if (!isOpen) return null;
+  if (!mounted || !isOpen) return null;
 
   return ReactDOM.createPortal(
     <div className={styles.overlay}>

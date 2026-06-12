@@ -20,7 +20,6 @@ export default function ImageCard({ cardData }) {
           alt={cardData.name + " image"}
           className={style.image}
           fill
-          sizes="(max-width: 768px) 100vw, 330px"
         />
       </div>
       <section

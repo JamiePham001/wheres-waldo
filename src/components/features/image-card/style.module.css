@@ -4,7 +4,6 @@
   align-items: center;
   width: 330px;
   background-color: var(--foreground);
-  height: 310px;
   border-radius: 4%;
   transition: 0.1s;
   overflow: hidden;
@@ -17,14 +16,13 @@
 .imageWrapper {
   position: relative;
   width: 100%;
-  height: 800px;
+  aspect-ratio: 4 / 3; /* or whatever ratio your images use */
 }
 
 .image {
   width: 100%;
-  height: 800px;
   border-radius: 4% 4% 0 0;
-  object-fit: cover;
+  /* object-fit: cover; */
 }
 
 .section {
@@ -32,6 +30,7 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
+  height: 2rem;
   color: white;
   gap: 5px;
 }
