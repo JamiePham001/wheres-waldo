@@ -1,13 +1,32 @@
 import { finishScore } from "@/lib/db/queries";
+import { NextResponse } from "next/server";
 
 export async function POST(request) {
   try {
     const body = await request.json().catch(() => ({}));
-    const { scoreId } = body;
-    const finishedScore = await finishScore(scoreId);
-    return Response.json({ success: true, data: finishedScore });
+
+    if (!body.scoreId) {
+      return NextResponse.json(
+        { success: false, error: "Missing score ID" },
+        { status: 400 },
+      );
+    }
+
+    const numericId = Number(body.scoreId);
+
+    if (Number.isNaN(numericId)) {
+      return NextResponse.json(
+        { success: false, error: "Invalid score ID" },
+        { status: 400 },
+      );
+    }
+
+    const finishedScore = await finishScore(numericId);
+
+    return NextResponse.json({ success: true, data: finishedScore });
   } catch (error) {
-    return Response.json(
+    console.error("Scoreboard API error:", error);
+    return NextResponse.json(
       { success: false, error: error?.message || "Internal Server Error" },
       { status: 500 },
     );

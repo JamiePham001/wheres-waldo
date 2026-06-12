@@ -19,6 +19,8 @@ export default function MapCreationForm() {
   const [imageCoordinates, setImageCoordinates] = useState("");
   const previewUrlRef = useRef("");
 
+  const [aspectRatio, setAspectRatio] = useState(1); // default to 1 to avoid division by zero
+
   useEffect(() => {
     return () => {
       if (previewUrlRef.current) {
@@ -30,19 +32,28 @@ export default function MapCreationForm() {
   function handleFileChange(event) {
     const file = event.target.files?.[0];
 
-    if (previewUrlRef.current) {
-      URL.revokeObjectURL(previewUrlRef.current);
-      previewUrlRef.current = "";
-    }
-
     if (!file) {
       setPreviewUrl("");
       return;
     }
 
+    // Revoke the old object URL if it exists to prevent memory leaks
+    if (previewUrlRef.current) {
+      URL.revokeObjectURL(previewUrlRef.current);
+      previewUrlRef.current = "";
+    }
+
+    // Create a new object URL for the selected file and update state
     const objectUrl = URL.createObjectURL(file);
     previewUrlRef.current = objectUrl;
     setPreviewUrl(objectUrl);
+
+    // Calculate aspect ratio for dynamic height adjustment
+    const img = document.createElement("img");
+    img.onload = () => {
+      setAspectRatio(img.height / img.width);
+    };
+    img.src = objectUrl;
   }
 
   function checkIfAllInputsEmpty() {
@@ -62,6 +73,7 @@ export default function MapCreationForm() {
           body: formData,
         });
         const result = await response.json();
+        console.log("Server response:", result);
       } catch (error) {
         console.error("Error submitting data:", error);
       }
@@ -103,7 +115,12 @@ export default function MapCreationForm() {
       />
 
       {previewUrl ? (
-        <div className={styles.previewWrapper}>
+        <div
+          className={styles.previewWrapper}
+          style={{
+            paddingTop: `${aspectRatio * 100}%`, // dynamic height
+          }}
+        >
           <Image
             src={previewUrl}
             alt="Selected map preview"
@@ -113,7 +130,7 @@ export default function MapCreationForm() {
             unoptimized
             onClick={(event) => handleImageClick(event, setImageCoordinates)}
             style={{
-              objectFit: "cover",
+              objectFit: "contain",
               cursor: "crosshair",
             }}
           />

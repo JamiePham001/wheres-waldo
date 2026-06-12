@@ -1,37 +1,30 @@
+// Next.js API route to fetch map data by ID
+
 import { getMapById } from "@/lib/db/queries";
+import { NextResponse } from "next/server";
 
-export async function GET(_request, { params }) {
-  const id = Number(params.id);
-
-  if (!params.id) {
-    return Response.json(
-      { success: false, error: "Missing map ID" },
-      { status: 400 },
-    );
-  }
-
-  if (Number.isNaN(id)) {
-    return Response.json(
-      { success: false, error: "Invalid map ID" },
-      { status: 400 },
-    );
-  }
-
+export async function GET(req, { params }) {
   try {
-    const map = await getMapById(id);
+    const { id } = await params;
+    const numericId = Number(id);
 
-    if (!map) {
-      return Response.json(
-        { success: false, error: "Map not found" },
-        { status: 404 },
-      );
+    if (Number.isNaN(numericId)) {
+      return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
     }
 
-    return Response.json({ success: true, data: map });
-  } catch {
-    return Response.json(
-      { success: false, error: "Internal Server Error" },
-      { status: 500 },
-    );
+    if (!id) {
+      return NextResponse.json({ error: "Missing map ID" }, { status: 400 });
+    }
+
+    const map = await getMapById(numericId);
+
+    if (!map) {
+      return NextResponse.json({ error: "Map not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ data: map }, { status: 200 });
+  } catch (err) {
+    console.error("API error:", err);
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

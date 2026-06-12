@@ -26,10 +26,10 @@ model Image {
   name String
   data  String
   createdAt DateTime @default(now())
-  waldo String?
-  wenda String?
-  odlaw String?
-  wizard String?
+  waldo String? @default("")
+  wenda String? @default("")
+  odlaw String? @default("")
+  wizard String? @default("")
 
   scores Score[]
 }

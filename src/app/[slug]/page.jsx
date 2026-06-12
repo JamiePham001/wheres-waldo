@@ -28,6 +28,8 @@ export default function MapLevel() {
   const [characters, setCharacters] = useState([]);
   const lastClickRef = useRef(null);
 
+  const [aspectRatio, setAspectRatio] = useState(1);
+
   // timer
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
@@ -42,7 +44,11 @@ export default function MapLevel() {
   const { user } = useAuth();
 
   useEffect(() => {
-    if (!paramsId?.slug) {
+    const mapId = Number(paramsId?.slug);
+
+    console.log("Fetching map with ID:", mapId);
+
+    if (!Number.isInteger(mapId) || mapId <= 0) {
       return;
     }
 
@@ -59,6 +65,7 @@ export default function MapLevel() {
           throw new Error(`Request failed with status ${response.status}`);
         }
         const payload = await response.json();
+        handleStart(isRunning, setIsRunning, intervalRef, setTime);
         scoreIdRef.current = payload.data.id;
       } catch (error) {
         console.error("Error creating score:", error);
@@ -67,8 +74,11 @@ export default function MapLevel() {
 
     const fetchMap = async () => {
       try {
-        const response = await fetch(`/api/image/${paramsId.slug}`, {
+        const response = await fetch(`/api/image/${mapId}`, {
           method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
 
         if (!response.ok) {
@@ -82,13 +92,23 @@ export default function MapLevel() {
 
         setMapData(payload.data);
         const parsedMap = JSON.parse(payload.data.data);
-        setMap(parsedMap);
+        console.log("Parsed map data:", parsedMap);
+
+        setMap(parsedMap.secure_url);
+
+        const img = document.createElement("img");
+        img.onload = () => {
+          setAspectRatio(img.height / img.width);
+        };
+        img.src = parsedMap.secure_url;
+
+        console.log("Payload data:", payload.data);
         const filteredCharacters = [
           { waldo: payload.data.waldo, found: false, time: null },
           { odlaw: payload.data.odlaw, found: false, time: null },
           { wizard: payload.data.wizard, found: false, time: null },
           { wenda: payload.data.wenda, found: false, time: null },
-        ].filter((char) => Object.values(char)[0] !== null);
+        ].filter((char) => Object.values(char)[0] !== "");
         setCharacters(filteredCharacters);
 
         if (user?.id) {
@@ -99,13 +119,8 @@ export default function MapLevel() {
       }
     };
 
-    handleStart(isRunning, setIsRunning, intervalRef, setTime);
     fetchMap();
-
-    return () => {
-      clearTimer(intervalRef);
-    };
-  }, [paramsId.slug]);
+  }, [isRunning, paramsId?.slug, user?.id]);
 
   // This effect runs whenever the user clicks on the image (i.e., when imageCoordinates changes).
   useEffect(() => {
@@ -118,22 +133,26 @@ export default function MapLevel() {
       prevCharacters.map((character) => {
         const characterName = Object.keys(character)[0];
 
+        // If character is already found or click doesn't correspond to this character, return unchanged.
         if (!characterName || character.found) {
           return character;
         }
 
+        // checkClick returns true if the click coordinates match the character's coordinates in the database, false otherwise.
         const isClicked = checkClick(
           imageCoordinates,
           character[characterName],
         );
 
+        // If click doesn't match this character, return unchanged. If it does match, update found to true and set the time for this character.
         if (!isClicked) {
           return character;
         }
 
-        if (lastClickRef.current) {
+        // Trigger confetti at click location when a character is found
+        if (isClicked && lastClickRef.current) {
           makeConfetti(lastClickRef.current);
-          const split = handleSplit(isRunning, time);
+          console.log(`Time on click: ${time}`);
         }
 
         return {
@@ -143,7 +162,7 @@ export default function MapLevel() {
         };
       }),
     );
-  }, [imageCoordinates]);
+  }, [imageCoordinates, isRunning, time]);
 
   // check if all characters are found to trigger win condition. This runs after the character states update from a click.
   useEffect(() => {
@@ -172,7 +191,7 @@ export default function MapLevel() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ gameId: scoreId }),
+          body: JSON.stringify({ scoreId }),
         });
         if (!response.ok) {
           throw new Error(`Request failed with status ${response.status}`);
@@ -182,6 +201,7 @@ export default function MapLevel() {
           new Date(payload.data.finishAt).getTime() / 1000 -
             new Date(payload.data.startedAt).getTime() / 1000,
         );
+        clearTimer(intervalRef);
         return finalTime;
       } catch (error) {
         console.error("Error finishing score:", error);
@@ -220,7 +240,7 @@ export default function MapLevel() {
     ) {
       completeLevel();
     }
-  }, [characters]);
+  }, [characters, paramsId.slug]);
 
   return (
     <div className="page">
@@ -234,10 +254,15 @@ export default function MapLevel() {
           </div>
         )}
 
-        {map?.url ? (
-          <div className={styles.mapImageWrapper}>
+        {map ? (
+          <div
+            className={styles.mapImageWrapper}
+            style={{
+              paddingTop: `${aspectRatio * 100}%`, // dynamic height
+            }}
+          >
             <Image
-              src={map.url}
+              src={map}
               alt="Selected map preview"
               id="waldo-image"
               fill
@@ -252,7 +277,7 @@ export default function MapLevel() {
                 handleImageClick(event, setImageCoordinates);
               }}
               style={{
-                objectFit: "cover",
+                objectFit: "contain",
                 cursor: "crosshair",
               }}
             />

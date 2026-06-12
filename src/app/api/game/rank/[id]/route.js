@@ -1,16 +1,10 @@
 import { getRankById } from "@/lib/db/queries";
 
 export async function GET(_request, { params }) {
-  const id = Number(params.id);
+  const { id } = await params;
+  const numericId = Number(id);
 
-  if (!params.id) {
-    return Response.json(
-      { success: false, error: "Missing some ID" },
-      { status: 400 },
-    );
-  }
-
-  if (Number.isNaN(id)) {
+  if (Number.isNaN(numericId)) {
     return Response.json(
       { success: false, error: "Invalid ID" },
       { status: 400 },
@@ -18,7 +12,7 @@ export async function GET(_request, { params }) {
   }
 
   try {
-    const rank = await getRankById(id);
+    const rank = await getRankById(numericId);
 
     if (!rank) {
       return Response.json(

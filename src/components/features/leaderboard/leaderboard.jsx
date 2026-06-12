@@ -5,9 +5,15 @@ export default function Leaderboard({ mapData }) {
   const [scores, setScores] = useState([]);
 
   useEffect(() => {
+    const mapId = Number(mapData?.id);
+
+    if (!Number.isInteger(mapId) || mapId <= 0) {
+      return;
+    }
+
     const fetchScores = async () => {
       try {
-        const response = await fetch(`/api/game/scoreboard/${mapData.id}`);
+        const response = await fetch(`/api/game/scoreboard/${mapId}`);
         const data = await response.json();
         if (data.success) {
           setScores(data.scores);

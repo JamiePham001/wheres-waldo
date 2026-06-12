@@ -10,7 +10,7 @@ export default function ImageCard({ cardData }) {
     { odlaw: cardData.odlaw, found: false },
     { wizard: cardData.wizard, found: false },
     { wenda: cardData.wenda, found: false },
-  ].filter((char) => Object.values(char)[0] !== null);
+  ].filter((char) => Object.values(char)[0] !== "");
 
   return (
     <Link className={style.imageCard} href={`/${cardData.id}`}>
