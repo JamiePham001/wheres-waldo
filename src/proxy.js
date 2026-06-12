@@ -5,7 +5,7 @@ import {
   shouldBlockMapCreation,
 } from "./lib/access/mapCreationGate";
 
-export function middleware(request) {
+export function proxy(request) {
   if (!shouldBlockMapCreation()) {
     return NextResponse.next();
   }
