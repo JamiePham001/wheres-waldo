@@ -2,7 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "../components/layout/header/Header";
 import Footer from "../components/layout/footer/Footer";
-import AuthProvider from "@/components/features/auth/AuthProvider";
+import ClientProviders from "@/components/providers/ClientProviders";
 import AuthGate from "@/components/layout/authModal/AuthGate";
 
 const geistSans = Geist({
@@ -24,12 +24,14 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <AuthProvider>
+        <ClientProviders>
           <Header />
           <AuthGate />
+
           {children}
+
           <Footer />
-        </AuthProvider>
+        </ClientProviders>
       </body>
     </html>
   );
