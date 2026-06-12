@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useState, useEffect, useRef, use } from "react";
+import { createContext, useContext, useState, useEffect, useRef } from "react";
 import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext();
@@ -15,7 +15,7 @@ function isLikelyJwt(token) {
 }
 
 export function useAuth() {
-  const context = use(AuthContext);
+  const context = useContext(AuthContext);
   if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
