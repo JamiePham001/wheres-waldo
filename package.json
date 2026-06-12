@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "@netlify/next": "^1.4.9",
-    "@prisma/adapter-pg": "^7.4.1",
-    "@prisma/client": "^7.4.1",
+    "@prisma/adapter-pg": "^7.6.0",
+    "@prisma/client": "^7.6.0",
     "canvas-confetti": "^1.9.4",
     "cloudinary": "^2.9.0",
     "dotenv": "^17.3.1",
@@ -25,10 +25,13 @@
   },
   "devDependencies": {
     "@netlify/plugin-nextjs": "^5.15.11",
-    "@types/node": "^25.9.3",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
-    "prisma": "^7.4.1"
+    "prisma": "^7.6.0",
+    "supabase": "^2.105.0"
   }
 }
