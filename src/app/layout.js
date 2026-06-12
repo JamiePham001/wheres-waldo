@@ -1,7 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "../components/layout/header/Header";
-import Footer from "../components/layout/footer/Footer";
 import ClientProviders from "@/components/providers/ClientProviders";
 import AuthGate from "@/components/layout/authModal/AuthGate";
 
@@ -27,10 +26,7 @@ export default function RootLayout({ children }) {
         <ClientProviders>
           <Header />
           <AuthGate />
-
           {children}
-
-          <Footer />
         </ClientProviders>
       </body>
     </html>

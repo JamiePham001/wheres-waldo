@@ -243,7 +243,7 @@ export default function MapLevel() {
   }, [characters, paramsId.slug]);
 
   return (
-    <div className="page">
+    <div className="page" style={{ paddingBottom: "8rem" }}>
       <main className={styles.main}>
         {characters.length > 0 && (
           <div style={{ padding: "30px 0" }}>

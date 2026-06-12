@@ -7,6 +7,7 @@
   border-radius: 4%;
   transition: 0.1s;
   overflow: hidden;
+  height: 20rem;
 }
 
 .imageCard:hover {
@@ -16,16 +17,16 @@
 .imageWrapper {
   position: relative;
   width: 100%;
-  aspect-ratio: 4 / 3; /* or whatever ratio your images use */
+  aspect-ratio: 4 / 3;
 }
 
 .image {
   width: 100%;
   border-radius: 4% 4% 0 0;
-  /* object-fit: cover; */
+  object-fit: cover;
 }
 
-.section {
+.iconSection {
   display: flex;
   flex-direction: column;
   align-items: center;

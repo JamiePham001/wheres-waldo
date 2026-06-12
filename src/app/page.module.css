@@ -10,17 +10,18 @@
   --button-secondary-border: #ebebeb;
 
   display: flex;
-  height: 85vh;
+  max-height: calc(100vh - 100px);
   justify-content: center;
   font-family: var(--font-geist-sans);
+  padding-bottom: 8rem;
   /* background-color: var(--background); */
 }
 
 .main {
   display: grid;
   padding: 20px 60px;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem; /* spacing between items */
+  gap: 1rem;
+  grid-template-columns: 1fr 1fr 1fr;
 }
 
 .intro {

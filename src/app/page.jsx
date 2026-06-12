@@ -41,9 +41,7 @@ export default function Home() {
     <div className={styles.page}>
       <main className={styles.main}>
         {data.map((card) => {
-          return (
-            <ImageCard key={card.id} cardData={card} className={styles.card} />
-          );
+          return <ImageCard key={card.id} cardData={card} />;
         })}
       </main>
     </div>

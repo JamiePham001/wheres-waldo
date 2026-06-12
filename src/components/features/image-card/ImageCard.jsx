@@ -22,21 +22,12 @@ export default function ImageCard({ cardData }) {
           fill
         />
       </div>
-      <section
-        className={style.section}
-        style={{
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          width: "100%",
-          height: "100%",
-        }}
-      >
+      <div className={style.iconSection}>
         <div className="title" style={{ fontSize: "20px", fontWeight: "500" }}>
           {cardData.name}
         </div>
         <CharIconContainer imageData={characters} />
-      </section>
+      </div>
     </Link>
   );
 }
