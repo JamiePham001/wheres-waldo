@@ -1,5 +1,6 @@
 import cloudinary from "@/lib/cloudinary";
 import { createMap } from "@/lib/db/queries.js";
+import { NextResponse } from "next/server";
 
 function uploadBufferToCloudinary(buffer, folder = "wheres-waldo") {
   return new Promise((resolve, reject) => {
@@ -19,6 +20,7 @@ function uploadBufferToCloudinary(buffer, folder = "wheres-waldo") {
   });
 }
 
+// Helper function to get form values with fallback keys
 function getFormValue(formData, primaryKey, fallbackKey) {
   return formData.get(primaryKey) ?? formData.get(fallbackKey) ?? "";
 }
@@ -28,8 +30,15 @@ export async function POST(request) {
     const formData = await request.formData();
     const image = formData.get("image");
 
+    if (!formData) {
+      return NextResponse.json(
+        { success: false, error: "No form data provided" },
+        { status: 400 },
+      );
+    }
+
     if (!(image instanceof File)) {
-      return Response.json(
+      return NextResponse.json(
         { success: false, error: "No image file uploaded" },
         { status: 400 },
       );
@@ -37,6 +46,13 @@ export async function POST(request) {
 
     const imageBuffer = Buffer.from(await image.arrayBuffer());
     const uploadResult = await uploadBufferToCloudinary(imageBuffer);
+
+    if (!uploadResult) {
+      return NextResponse.json(
+        { success: false, error: "Image upload failed" },
+        { status: 500 },
+      );
+    }
 
     const mapData = {
       name: getFormValue(formData, "name", "level-name"),
@@ -62,9 +78,16 @@ export async function POST(request) {
       ),
     };
 
-    await createMap(mapData, uploadResult);
+    const map = await createMap(mapData, uploadResult);
 
-    return Response.json(
+    if (!map) {
+      return NextResponse.json(
+        { success: false, error: "Failed to create map" },
+        { status: 500 },
+      );
+    }
+
+    return NextResponse.json(
       {
         success: true,
         image: {
@@ -80,7 +103,7 @@ export async function POST(request) {
       { status: 201 },
     );
   } catch (error) {
-    return Response.json(
+    return NextResponse.json(
       {
         success: false,
         error: error?.message || "Upload failed",

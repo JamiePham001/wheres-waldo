@@ -16,6 +16,7 @@ const getIntervalId = (intervalRef) => {
   return current;
 };
 
+// Clears the timer interval and resets the ref to null
 export const clearTimer = (intervalRef) => {
   const intervalId = getIntervalId(intervalRef);
   if (intervalId) {

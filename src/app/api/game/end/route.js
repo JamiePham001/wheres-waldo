@@ -23,6 +23,13 @@ export async function POST(request) {
 
     const finishedScore = await finishScore(numericId);
 
+    if (!finishedScore) {
+      return NextResponse.json(
+        { success: false, error: "Score not found or already finished" },
+        { status: 404 },
+      );
+    }
+
     return NextResponse.json({ success: true, data: finishedScore });
   } catch (error) {
     console.error("Scoreboard API error:", error);
