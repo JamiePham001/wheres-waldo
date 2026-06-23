@@ -10,8 +10,6 @@ The application combines a React-based client experience with Next.js API routes
 <img width="2538" height="1279" alt="image" src="https://github.com/user-attachments/assets/bfae7a37-7cd6-4374-a041-5caec49e9ae6" />
 <img width="2535" height="1274" alt="image" src="https://github.com/user-attachments/assets/571a10dd-a780-4c61-80ab-7044669c2a21" />
 
-
-
 ## Features
 
 - Browse available maps from the home page
@@ -135,6 +133,7 @@ The game uses a server-authoritative timing model to prevent players from submit
 When a level begins, the backend creates a score record in the database with a `startedAt` timestamp set by the server, not the client. When the player completes the level, the client sends a request to the end-game API, which sets the `finishAt` timestamp — also server-side. The actual run duration is always computed as `finishAt - startedAt` from these two database values, which means the client timer displayed to the player is only cosmetic and has no influence over the recorded time.
 
 This means:
+
 - A player cannot fabricate a short completion time by sending a custom time value to the server
 - Pausing or manipulating the visible client timer does not affect the actual score
 - Any score submitted to the leaderboard reflects a duration that was entirely measured by the server
@@ -204,6 +203,38 @@ To run the full project locally, you will need environment variables for:
 - JWT signing
 - Cloudinary credentials
 - the optional map creation access toggle
+
+Copy `.env.example` to `.env` (or your deployment provider's env manager) and fill in the values.
+
+## Database Hosting (Supabase Replacement)
+
+This project now uses a standard managed PostgreSQL setup through Prisma, instead of Supabase-hosted Postgres.
+
+Recommended host for this stack: **Prisma Postgres** (native Prisma workflow), though any PostgreSQL provider that supplies connection strings (Neon, Railway, Render, etc.) also works.
+
+### Setup Steps
+
+1. Create a new hosted PostgreSQL database.
+2. Set these env variables:
+   - `DATABASE_URL` (pooled/runtime URL)
+   - `DIRECT_URL` (direct URL for migrations)
+3. Apply existing migrations:
+
+```bash
+npx prisma migrate deploy
+```
+
+4. Regenerate Prisma client:
+
+```bash
+npx prisma generate
+```
+
+5. Start the app:
+
+```bash
+npm run dev
+```
 
 ## Future Improvements
 

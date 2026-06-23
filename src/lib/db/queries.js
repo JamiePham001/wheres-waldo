@@ -89,7 +89,7 @@ export const getRankById = async (scoreId) => {
 export const getOrderedLevels = async () => {
   return await prisma.image.findMany({
     orderBy: {
-      name: "asc",
+      id: "asc",
     },
   });
 };
